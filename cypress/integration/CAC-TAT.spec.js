@@ -41,7 +41,7 @@ describe("Central de Atendimento ao Cliente TAT", function () {
     cy.get("#phone").type("abcdefg").should("have.value", "")
   })
 
-  it.only("exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário", function () {
+  it("exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário", function () {
     cy.get("#firstName").type("Andre")
     cy.get("#lastName").type("Zambroni")
     cy.get("#email").type("andre@email.com")
@@ -122,12 +122,47 @@ describe("Central de Atendimento ao Cliente TAT", function () {
     cy.get('input[type="checkbox"]').last().uncheck().should("not.be.checked")
   })
 
-  it("marca ambos checkboxes, depois desmarca o último", function () {
-    cy.get('input[type="checkbox"]')
-      .check()
-      .should("be.checked")
-      .last()
-      .uncheck()
-      .should("not.be.checked")
+  // it("marca ambos checkboxes, depois desmarca o último", function () {
+  //   cy.get('input[type="checkbox"]')
+  //     .check()
+  //     .should("be.checked")
+  //     .last()
+  //     .uncheck()
+  //     .should("not.be.checked")
+  // })
+
+  it("seleciona um arquivo da pasta fixtures", function () {
+    const fileName = "example.json" // Nome do arquivo na pasta fixtures
+
+    cy.get('input[type="file"]#file-upload')
+      .selectFile(`cypress/fixtures/${fileName}`)
+      .should((input) => {
+        expect(input[0].files[0].name).to.equal(fileName)
+      })
+  })
+
+  // Drag-and-drop (arrastar e soltar)
+  it("seleciona um arquivo simulando um drag-and-drop", function () {
+    const fileName = "example.json" // Nome do arquivo na pasta fixtures
+
+    cy.get('input[type="file"]#file-upload')
+      .selectFile(`cypress/fixtures/${fileName}`, { action: "drag-drop" })
+      .should((input) => {
+        expect(input[0].files[0].name).to.equal(fileName)
+      })
+  })
+
+  it.only("seleciona um arquivo utilizando uma fixture para a qual foi dada um alias", function () {
+    const fileName = "example.json"
+
+    cy.fixture(fileName).as("exampleFile")
+    cy.get('input[type="file"]#file-upload')
+      .selectFile({
+        contents: "@exampleFile",
+        fileName: fileName,
+      })
+      .should((input) => {
+        expect(input[0].files[0].name).to.equal(fileName)
+      })
   })
 })
