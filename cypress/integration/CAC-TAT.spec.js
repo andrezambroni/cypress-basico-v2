@@ -41,14 +41,14 @@ describe("Central de Atendimento ao Cliente TAT", function () {
     cy.get("#phone").type("abcdefg").should("have.value", "")
   })
 
-  it("exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário", function () {
+  it.only("exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário", function () {
     cy.get("#firstName").type("Andre")
     cy.get("#lastName").type("Zambroni")
     cy.get("#email").type("andre@email.com")
-    cy.get("#phone").type("")
+    cy.get("#phone-checkbox").check() // Marca o checkbox "Telefone"
+    cy.get("#phone").should("have.value", "") // Verifica que o campo de telefone está vazio
     cy.get("#open-text-area").type(
-      "Mensagem de teste | Mensagem de teste | Mensagem de teste | Mensagem de teste | Mensagem de teste | Mensagem de teste | Mensagem de teste  Mensagem de teste |  Mensagem de teste | Mensagem de teste | Mensagem de teste |",
-      { delay: 0 }
+      "Mensagem de teste | Mensagem de teste | Mensagem de teste | Mensagem de teste | Mensagem de teste | Mensagem de teste"
     )
     cy.get('button[type="submit"]').click()
 
@@ -111,9 +111,23 @@ describe("Central de Atendimento ao Cliente TAT", function () {
       .should("have.value", "feedback")
   })
 
-  it.only("marca cada tipo de atendimento", function () {
+  it("marca cada tipo de atendimento", function () {
     cy.get('input[type="radio"][value="ajuda"]').check().should("be.checked")
     cy.get('input[type="radio"][value="elogio"]').check().should("be.checked")
     cy.get('input[type="radio"][value="feedback"]').check().should("be.checked")
+  })
+
+  it("marca ambos checkboxes, depois desmarca o último", function () {
+    cy.get('input[type="checkbox"]').check().should("be.checked")
+    cy.get('input[type="checkbox"]').last().uncheck().should("not.be.checked")
+  })
+
+  it("marca ambos checkboxes, depois desmarca o último", function () {
+    cy.get('input[type="checkbox"]')
+      .check()
+      .should("be.checked")
+      .last()
+      .uncheck()
+      .should("not.be.checked")
   })
 })
